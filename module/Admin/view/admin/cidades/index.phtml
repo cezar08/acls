@@ -1,0 +1,30 @@
+<button class="btn btn-success" onclick="location.href='/admin/cidades/save'">Novo cidade</button>
+
+<table class="table">
+    <thead>
+    <tr>
+        <td>Id</td><td>Descrição</td>
+    </tr>
+    </thead>
+    <tbody>
+        <?php foreach($cidade as $cidade) {
+        ?>
+            <tr>
+                <td>
+                    <?php echo $cidade->getId(); ?>
+                </td>
+                <td>
+                    <?php echo $cidade->getDescCidade(); ?>
+                </td>
+                <td>
+                    <a href="/admin/cidade/save/id/<?php echo $cidade->getId(); ?>">Editar</a>
+                </td>
+                <td>
+                    <a href="/admin/cidade/delete/id/<?php echo $cidade->getId(); ?>">Excluir</a>
+                </td>
+            </tr>
+        <?php }
+        ?>
+    </tbody>
+
+</table>

@@ -1,0 +1,30 @@
+<button class="btn btn-success" onclick="location.href='/pj/admin/sexos/save'">Novo sexo</button>
+
+<table class="table">
+    <thead>
+    <tr>
+        <td>Id</td><td>Descrição</td>
+    </tr>
+    </thead>
+    <tbody>
+    <?php foreach($sexos as $sexo) {
+        ?>
+        <tr>
+            <td>
+                <?php echo $sexo->getId(); ?>
+            </td>
+            <td>
+                <?php echo $sexo->getDescSexo(); ?>
+            </td>
+            <td>
+                <a href="/pj/admin/sexos/save/id/<?php echo $sexo->getId(); ?>">Editar</a>
+            </td>
+            <td>
+                <a href="/pj/admin/sexos/delete/id/<?php echo $sexo->getId(); ?>">Excluir</a>
+            </td>
+        </tr>
+    <?php }
+    ?>
+    </tbody>
+
+</table>

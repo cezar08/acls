@@ -1,0 +1,35 @@
+<?php
+return array(
+    'doctrine' => array(
+        'connection' => array(
+            'orm_default' => array(
+                'driverClass' => 'Doctrine\DBAL\Driver\PDOPgSql\Driver',
+                'params' => array(
+                    'host' => '127.0.0.1',
+                    'port' => '5432',
+                    'user' => 'postgres',
+                    'password' => 'root',
+                    'dbname' => 'trab',)
+            )
+        ),
+	'authentication' => array(
+            'orm_default' => array(
+                'object_manager' => 'Doctrine\ORM\EntityManager',
+                'identity_class' => 'Admin\Entity\Usuario',
+                'identity_property' => 'email',
+                'credential_property' => 'senha',
+            ),
+        ),
+    ));
+
+
+
+
+
+
+
+
+
+
+
+
