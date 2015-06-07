@@ -26,6 +26,9 @@
                 <?php echo $usuario->getSexo()->getDescricao(); ?>
             </td>
             <td>
+                <a href="/admin/usuarios/get-photo/id/<?php echo $usuario->getId(); ?>">Ver foto</a>
+            </td>
+            <td>
                 <a href="/admin/usuarios/save/id/<?php echo $usuario->getId(); ?>">Editar</a>
             </td>
 			<td>

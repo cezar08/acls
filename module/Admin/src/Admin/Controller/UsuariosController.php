@@ -2,6 +2,7 @@
 
 namespace Admin\Controller;
 
+use Zend\Validator\Exception\InvalidMagicMimeFileException;
 use Zend\View\Model\ViewModel;
 use Zend\Mvc\Controller\AbstractActionController;
 use \Admin\Form\Usuario as UsuarioForm;
@@ -26,15 +27,12 @@ class UsuariosController extends AbstractActionController
      */
     public function indexAction()
     {
-        $em =  $this->getServiceLocator()->get('Doctrine\ORM\EntityManager');
-        $query = $em
-        ->createQuery('SELECT Usuario FROM \Admin\Entity\Usuario Usuario');
-        
+        $search = isset($_GET['q']) ? $_GET['q'] : null;
 
+        $data = $this->getServiceUser()->fetchAll($search);
         $paginator = new Paginator(
-            new DoctrinePaginator(new ORMPaginator($query))
+            new DoctrinePaginator(new ORMPaginator($data))
         );
-
 
         $paginator
         ->setCurrentPageNumber($this->params()->fromRoute('page'))
@@ -60,36 +58,20 @@ class UsuariosController extends AbstractActionController
         if ($request->isPost()) {
             $usuario = new Usuario();
             $values = $request->getPost();
+            $file = $request->getFiles('photo');
+            $photo = $this->getServiceUser()->uploadPhoto($file);
             $form->setInputFilter($usuario->getInputFilter());
             $form->setData($values);
-			
+
             if ($form->isValid()) {				
                 $values = $form->getData();
-
-                if ( (int) $values['id'] > 0)
-                    $usuario = $em->find('\Admin\Entity\Usuario', $values['id']);
-
-                $usuario->setNome($values['nome']);
-                $usuario->setEmail($values['email']);
-                $usuario->setSenha($values['senha']);
-                $usuario->setSobrenome($values['sobrenome']);
-                $usuario->setRole($values['role']);
-                $sexo = $em->find('\Admin\Entity\Sexo', $values['sexo']);
-                $usuario->setSexo($sexo);
-		$usuario->getInteresses()->clear();
-
-                foreach ($values['interesses'] as $interesse) {
-                    $interesse = $em->find('\Admin\Entity\Interesse', $interesse);
-                    $usuario->getInteresses()->add($interesse);
-                }
-
-                $em->persist($usuario);
+                $values['photo'] = $photo;
 
                 try {
-                    $em->flush();
+                    $this->getServiceUser()->save($values);
                     $this->flashMessenger()->addSuccessMessage('Usuário armazenado com sucesso');
                 } catch (\Exception $e) {
-                    $this->flashMessenger()->addErrorMessage('Erro ao armazenar usuário');
+                    $this->flashMessenger()->addErrorMessage($e->getMessage());
                 }
 
                 return $this->redirect()->toUrl('/admin/usuarios');
@@ -99,8 +81,7 @@ class UsuariosController extends AbstractActionController
         $id = $this->params()->fromRoute('id', 0);
 
         if ((int) $id > 0) {
-            $usuario = $em->find('\Admin\Entity\Usuario', $id);
-            $form->bind($usuario);
+            $form->bind($this->getServiceUser()->get($id));
         }
 
         return new ViewModel(
@@ -113,8 +94,7 @@ class UsuariosController extends AbstractActionController
 		$id = $this->params()->fromRoute('id',0);
 		
 		if ($id > 0) {
-			$em =  $this->getServiceLocator()->get('Doctrine\ORM\EntityManager');
-			$usuario = $em->find('\Admin\Entity\Usuario', $id);
+			$usuario = $this->getServiceUser()->get($id);
 
 			return new ViewModel(
 				array(
@@ -134,21 +114,36 @@ class UsuariosController extends AbstractActionController
     public function deleteAction()
     {
         $id = $this->params()->fromRoute('id', 0);
-        $em =  $this->getServiceLocator()->get('Doctrine\ORM\EntityManager');
 
         if ($id > 0) {
-            $usuario = $em->find('\Admin\Entity\Usuario', $id);
-            $em->remove($usuario);
-
             try {
-                $em->flush();
+                $this->getServiceUser()->delete($id);
                 $this->flashMessenger()->addSuccessMessage('Usuário excluído com sucesso');
             } catch (\Exception $e) {
-                $this->flashMessenger()->addErrorMessage('Erro ao excluir usuário');
+                $this->flashMessenger()->addErrorMessage($e->getMessage());
             }
         }
 
         return $this->redirect()->toUrl('/admin/usuarios');
+    }
+
+    public function getPhotoAction()
+    {
+        header('Content-Type: image');
+        $id = (int) $this->params()->fromRoute('id', 0);
+        $photo = $this->getServiceUser()->getPhoto($id);
+        $view = new ViewModel(array('photo' => $photo));
+        $view->setTerminal(true);
+
+        return $view;
+    }
+
+    /**
+     * @return object
+     */
+    private function getServiceUser()
+    {
+        return $this->getServiceLocator()->get('Admin\Service\Usuario');
     }
 
 }

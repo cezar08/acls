@@ -84,6 +84,14 @@ class Usuario
     protected $role;
 
     /**
+     * @ORM\Column(type="blob", nullable=true)
+     *
+     * @var blob
+     */
+
+    protected $photo;
+
+    /**
      *
      * @return void
      */
@@ -204,6 +212,23 @@ class Usuario
     }
 
     /**
+     * @param blob $photo
+     *
+     */
+    public function setPhoto($photo)
+    {
+        $this->photo = $photo;
+    }
+
+    /**
+     * @return blob
+     */
+    public function getPhoto()
+    {
+        return $this->photo;
+    }
+
+    /**
      * @return array
      */
     public function getArrayCopy()
@@ -309,6 +334,33 @@ class Usuario
             )));
 
             $inputFilter->add($factory->createInput(array(
+                'name' => 'role',
+                'required' => true,
+                'validators' => array(
+                    array(
+                        'name' => 'NotEmpty',
+                        'options' => array('message' => 'O campo perfil não pode estar vazio')
+                    ),
+                    array(
+                        'name' => 'StringLength',
+                        'options' => array(
+                            'encoding' => 'UTF-8',
+                            'min' => 3,
+                            'max' => 255,
+                            'message' => 'O campo perfil deve ter mais que 3 caracteres e menos que 255',
+                        ),
+                    ),
+                ),
+                'filters' => array(
+                    array('name' => 'StripTags'),
+                    array('name' => 'StringTrim'),
+                    array('name' => 'StringToUpper',
+                        'options' => array('encoding' => 'UTF-8')
+                    ),
+                ),
+            )));
+
+            $inputFilter->add($factory->createInput(array(
                 'name' => 'email',
                 'required' => true,
                 'validators' => array(
@@ -365,6 +417,14 @@ class Usuario
 
             $this->inputFilter = $inputFilter;
         }
+
+        $inputFilter->add($factory->createInput(
+            array(
+                'name' => 'photo',
+                'required' => false
+            )
+
+        ));
 
         return $this->inputFilter;
     }

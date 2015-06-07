@@ -23,8 +23,8 @@ class UfsController extends AbstractActionController
     public function indexAction()
     {
 		$em =  $this->getServiceLocator()->get('Doctrine\ORM\EntityManager');
-		$dados = $em->getRepository('\Admin\Entity\Uf')->findAll();
-		
+		$dados = $em->createQuery('SELECT UF FROM \Admin\Entity\Uf UF')->getResult();
+
 		return new ViewModel(
 			array('ufs' => $dados)
 		);

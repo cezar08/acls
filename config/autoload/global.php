@@ -25,12 +25,15 @@ return array(
 		'Admin\Controller\Usuarios.index',
 		'Admin\Controller\Usuarios.save',
 		'Admin\Controller\Usuarios.delete',
+        'Admin\Controller\Usuarios.get-photo',
+        'Admin\Controller\Usuarios.interesses',
 		'Admin\Controller\Interesses.index',
 		'Admin\Controller\Interesses.save',
 		'Admin\Controller\Interesses.delete',
 		'Admin\Controller\Sexos.index',
 		'Admin\Controller\Sexos.save',
 		'Admin\Controller\Sexos.delete',
+        'Admin\Controller\Ufs.index',
 	    ),
 	    'privilege' => array(
 		'VISITANTE' => array(
@@ -55,6 +58,9 @@ return array(
 		  		'Admin\Controller\Usuarios.index',
 				'Admin\Controller\Usuarios.save',
 				'Admin\Controller\Usuarios.delete',
+                'Admin\Controller\Usuarios.interesses',
+                'Admin\Controller\Usuarios.get-photo',
+                'Admin\Controller\Ufs.index',
 		    )
 		),
     )

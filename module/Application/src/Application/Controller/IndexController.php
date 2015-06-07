@@ -16,7 +16,7 @@ class IndexController extends AbstractActionController
 {
     public function indexAction()
     {			
-	$this->layout('layout/login.phtml');
+	    $this->layout('layout/login.phtml');
     	$view = new ViewModel();
 
         return $view;
